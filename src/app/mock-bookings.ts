@@ -16,14 +16,14 @@ export const Bookings: Booking[] = [
         endDate: new Date("2021-08-01")
     },
     {
-        id: 1,
+        id: 3,
         name: 'John Doe',
         roomNumber: 2,
         startDate: new Date("2021-09-05"),
         endDate: new Date("2021-09-19")
     },
     {
-        id: 1,
+        id: 4,
         name: 'Maria Doemann',
         roomNumber: 105,
         startDate: new Date("2021-08-04"),
