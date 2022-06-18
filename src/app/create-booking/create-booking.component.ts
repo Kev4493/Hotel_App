@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Booking } from '../booking';
-import { Bookings } from '../mock-bookings';
 import { Router, ActivatedRoute } from '@angular/router';
+import { BookingService } from '../booking.service';
 
 @Component({
   selector: 'app-create-booking',
@@ -10,7 +10,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class CreateBookingComponent implements OnInit {
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) { }  // Für was brauchen wir den Constructor in einer Komponente?
+  constructor(  // Für was brauchen wir den Constructor in einer Komponente?
+    private router: Router, 
+    private activatedRoute: ActivatedRoute, 
+    private bookingService:BookingService) { }  
 
   booking: Booking = {
     id: 100,
@@ -21,18 +24,35 @@ export class CreateBookingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.router.url != '/create') { // Wenn die URL nicht /create ist, dann suche uns eine ID:
-      
+    if (this.router.url != '/create') { // Wenn die URL nicht /create ist, dann suche uns eine ID:
+
       var id = Number(this.activatedRoute.snapshot.paramMap.get('id')); // Wir holen von der activated Route die ID.
-      var bookingById = Bookings.find(x => x.id == id)!; // Bitte gib uns aus dem Array "Bookings" das booking zurück, wo die ID == Die ID vom Parameter ist.
+      var bookingById = this.bookingService.getBookingById(id);
       this.booking = bookingById;
     }
 
   }
 
   save(): void {
-    Bookings.push(this.booking);
+    var bookingById = this.bookingService.getBookingById(this.booking.id);
+
+    if(bookingById == null || bookingById == undefined) {
+      this.bookingService.addBooking(this.booking);
+    } else {
+      this.bookingService.updateBooking(this.booking);
+    }
+
     this.router.navigate(['bookings']);
+  }
+
+  dateChanged(event: Event, isStart: boolean) {
+    var val = (event.target as HTMLInputElement).value;
+
+    if (isStart == true) {
+      this.booking.startDate = new Date(val);
+    } else {
+      this.booking.endDate = new Date(val);
+    }
   }
 
 }
